@@ -4,34 +4,34 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
-  doc,
-  query,
-  orderBy
+  doc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const user = localStorage.getItem("currentUser");
 if (!user) location.href = "index.html";
 
-const ref = collection(db, "users", user, "classes");
+const colRef = collection(db, "users", user, "classes");
 
-window.addClass = async function () {
-  if (!date.value || !start.value || !end.value || !subject.value) {
-    alert("Fill required fields");
+async function addClass() {
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
+  const name = document.getElementById("classname").value;
+  const link = document.getElementById("link").value;
+
+  if (!date || !time || !name) {
+    alert("Fill all required fields");
     return;
   }
 
-  await addDoc(ref, {
-    date: date.value,
-    start: start.value,
-    end: end.value,
-    subject: subject.value,
-    link: link.value,
-    wa: wa.value,
-    created: Date.now()
+  await addDoc(colRef, {
+    date,
+    time,
+    name,
+    link
   });
 
   loadClasses();
-};
+}
 
 async function deleteClass(id) {
   await deleteDoc(doc(db, "users", user, "classes", id));
@@ -39,35 +39,23 @@ async function deleteClass(id) {
 }
 
 async function loadClasses() {
-  timetableBody.innerHTML = "";
-  upcoming.innerHTML = "";
-  past.innerHTML = "";
+  const list = document.getElementById("list");
+  list.innerHTML = "";
 
-  const q = query(ref, orderBy("created", "asc"));
-  const snap = await getDocs(q);
-  const now = new Date();
-
+  const snap = await getDocs(colRef);
   snap.forEach(d => {
     const c = d.data();
-    const t = new Date(`${c.date} ${c.start}`);
-
-    timetableBody.innerHTML += `
-      <tr>
-        <td>${c.date}</td>
-        <td>${c.start}</td>
-        <td>${c.end}</td>
-        <td>${c.subject}</td>
-        <td>${c.link ? `<a href="${c.link}" target="_blank">Open</a>` : "-"}</td>
-        <td>${c.wa || "-"}</td>
-        <td><button onclick="deleteClass('${d.id}')">❌</button></td>
-      </tr>
+    list.innerHTML += `
+      <li class="card">
+        <b>${c.name}</b><br>
+        ${c.date} ${c.time}<br>
+        <a href="${c.link}" target="_blank">${c.link || ""}</a>
+        <button onclick="deleteClass('${d.id}')">Delete</button>
+      </li>
     `;
-
-    const text = `${c.date} ${c.start} - ${c.subject}`;
-    if (t > now) upcoming.innerHTML += `<li>${text}</li>`;
-    else past.innerHTML += `<li>${text}</li>`;
   });
 }
 
+window.addClass = addClass;
 window.deleteClass = deleteClass;
 window.onload = loadClasses;

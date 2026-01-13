@@ -11,40 +11,51 @@
   <button onclick="logout()">Logout</button>
 </header>
 
+<!-- ADD CLASS -->
 <div class="card">
   <input id="date" type="date">
   <input id="start" type="time">
   <input id="end" type="time">
   <input id="subject" placeholder="Subject">
-  <input id="link" placeholder="Meeting Link">
-  <input id="wa" placeholder="WA Group">
-  <button onclick="addClass()">Add Class</button>
+  <input id="link" placeholder="Meeting Link (optional)">
+  <input id="wa" placeholder="WA Group (optional)">
+  <button onclick="addClass()">➕ Add Class</button>
 </div>
 
+<!-- TIME TABLE -->
 <div class="card">
-<table>
-<thead>
-<tr>
-<th>Date</th><th>Start</th><th>End</th><th>Subject</th>
-<th>Link</th><th>WA</th><th>Delete</th>
-</tr>
-</thead>
-<tbody id="timetableBody"></tbody>
-</table>
+  <h3>Time Table</h3>
+  <table width="100%">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Subject</th>
+        <th>Link</th>
+        <th>WA</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="timetableBody"></tbody>
+  </table>
 </div>
 
+<!-- UPCOMING -->
 <div class="card">
-<h3>Upcoming Classes</h3>
-<ul id="upcoming"></ul>
+  <h3>Upcoming Classes</h3>
+  <ul id="upcoming"></ul>
 </div>
 
+<!-- PAST -->
 <div class="card">
-<h3>Past Classes</h3>
-<ul id="past"></ul>
+  <h3>Past Classes</h3>
+  <ul id="past"></ul>
 </div>
 
 <script type="module" src="js/firebase.js"></script>
 <script type="module" src="js/timetable.js"></script>
-<script type="module" src="js/notes.js"></script>
+<script type="module" src="js/auth.js"></script>
+
 </body>
 </html>

@@ -19,7 +19,6 @@ async function addClass() {
   const end = document.getElementById("end").value;
   const subject = document.getElementById("subject").value;
   const link = document.getElementById("link").value;
-  const wa = document.getElementById("wa").value;
 
   if (!date || !start || !end || !subject) {
     alert("Please fill all required fields");
@@ -32,7 +31,6 @@ async function addClass() {
     end,
     subject,
     link,
-    wa,
     createdAt: Date.now()
   });
 

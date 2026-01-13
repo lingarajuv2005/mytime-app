@@ -1,53 +1,73 @@
+import { db } from "./firebase.js";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 const user = localStorage.getItem("currentUser");
-if (!user) window.location.href = "index.html";
+if (!user) location.href = "index.html";
 
-const storageKey = "classes_" + user;
+const ref = collection(db, "users", user, "classes");
 
-function addClass() {
-  const data = JSON.parse(localStorage.getItem(storageKey) || "[]");
+window.addClass = async function () {
+  if (!date.value || !start.value || !end.value || !subject.value) {
+    alert("Fill required fields");
+    return;
+  }
 
-  data.push({
+  await addDoc(ref, {
     date: date.value,
     start: start.value,
     end: end.value,
     subject: subject.value,
     link: link.value,
-    wa: wa.value
+    wa: wa.value,
+    created: Date.now()
   });
 
-  localStorage.setItem(storageKey, JSON.stringify(data));
+  loadClasses();
+};
+
+async function deleteClass(id) {
+  await deleteDoc(doc(db, "users", user, "classes", id));
   loadClasses();
 }
 
-function loadClasses() {
-  const data = JSON.parse(localStorage.getItem(storageKey) || "[]");
-
+async function loadClasses() {
   timetableBody.innerHTML = "";
   upcoming.innerHTML = "";
   past.innerHTML = "";
 
+  const q = query(ref, orderBy("created", "asc"));
+  const snap = await getDocs(q);
   const now = new Date();
 
-  data.forEach(c => {
+  snap.forEach(d => {
+    const c = d.data();
+    const t = new Date(`${c.date} ${c.start}`);
+
     timetableBody.innerHTML += `
       <tr>
         <td>${c.date}</td>
         <td>${c.start}</td>
         <td>${c.end}</td>
         <td>${c.subject}</td>
-        <td>${c.link || "-"}</td>
+        <td>${c.link ? `<a href="${c.link}" target="_blank">Open</a>` : "-"}</td>
         <td>${c.wa || "-"}</td>
+        <td><button onclick="deleteClass('${d.id}')">❌</button></td>
       </tr>
     `;
 
-    const classTime = new Date(c.date + " " + c.start);
-
-    if (classTime > now) {
-      upcoming.innerHTML += `<li>${c.date} ${c.start} - ${c.subject}</li>`;
-    } else {
-      past.innerHTML += `<li>${c.date} ${c.start} - ${c.subject}</li>`;
-    }
+    const text = `${c.date} ${c.start} - ${c.subject}`;
+    if (t > now) upcoming.innerHTML += `<li>${text}</li>`;
+    else past.innerHTML += `<li>${text}</li>`;
   });
 }
 
+window.deleteClass = deleteClass;
 window.onload = loadClasses;

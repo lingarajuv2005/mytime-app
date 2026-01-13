@@ -1,13 +1,13 @@
 function login() {
-  const u = document.getElementById("username").value;
-  const p = document.getElementById("password").value;
+  const u = username.value;
+  const p = password.value;
 
   if (
-    (u === "Lingaraju" && p === "Welcome@123") ||
-    (u === "Vishal" && p === "Welcome@123")
+    (u === "Lingaraju" || u === "Vishal") &&
+    p === "Welcome@123"
   ) {
     localStorage.setItem("currentUser", u);
-    window.location.href = "dashboard.html";
+    location.href = "dashboard.html";
   } else {
     alert("Invalid Login");
   }
@@ -15,5 +15,5 @@ function login() {
 
 function logout() {
   localStorage.removeItem("currentUser");
-  window.location.href = "index.html";
+  location.href = "index.html";
 }
